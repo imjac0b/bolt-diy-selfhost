@@ -1,0 +1,47 @@
+name: Deploy Bolt DIY
+
+on:
+  push:
+    branches: ["main"]
+
+  workflow_dispatch:
+
+  schedule:
+  - cron: "0 * * * *"
+
+env:
+  OPENAI_LIKE_API_BASE_URL: ${{ secrets.OPENAI_LIKE_API_BASE_URL }}
+  OPENAI_LIKE_API_KEY: ${{ secrets.OPENAI_LIKE_API_KEY }}
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          repository: "stackblitz-labs/bolt.diy"
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - run: bun run build
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy ./build/client --project-name=bolt-diy
+          secrets: |
+            OPENAI_LIKE_API_BASE_URL
+            OPENAI_LIKE_API_KEY
+
+  keepalive-job:
+    name: Keepalive Workflow
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gautamkrishnar/keepalive-workflow@v2
