@@ -22,6 +22,9 @@ jobs:
           repository: "stackblitz-labs/bolt.diy"
       - uses: oven-sh/setup-bun@v2
       - run: bun install
+      - name: Replace API URL
+        run: |
+          sed -i 's|api.x.ai|'"${{ secrets.AI_API }}/xai"'|g' app/lib/.server/llm/model.ts
       - run: bun run build
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
