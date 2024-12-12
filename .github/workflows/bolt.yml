@@ -31,10 +31,9 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy ./build/client --project-name=bolt-diy
           packageManager: bun
-      - run: bunx wrangler pages secret bulk --project-name=bolt-diy
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          postCommands: |
+            wrangler pages secret put OPENAI_LIKE_API_BASE_URL ${{ secrets.OPENAI_LIKE_API_BASE_URL }}
+            wrangler pages secret put OPENAI_LIKE_API_KEY ${{ secrets.OPENAI_LIKE_API_KEY }}
 
   keepalive-job:
     name: Keepalive Workflow
