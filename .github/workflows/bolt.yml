@@ -15,9 +15,6 @@ env:
 
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -34,9 +31,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy ./build/client --project-name=bolt-diy
           packageManager: bun
-          secrets: |
-            OPENAI_LIKE_API_BASE_URL
-            OPENAI_LIKE_API_KEY
+      - run: bunx wrangler pages secret bulk
 
   keepalive-job:
     name: Keepalive Workflow
