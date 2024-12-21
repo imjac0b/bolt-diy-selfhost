@@ -24,7 +24,7 @@ jobs:
       - run: bun install
       - name: Replace API URL
         run: |
-          sed -i 's|api.x.ai|'"${{ secrets.AI_API }}/xai"'|g' app/lib/.server/llm/model.ts
+          sed -i 's|api.x.ai|'"${{ secrets.AI_API }}/xai"'|g' app/lib/modules/llm/providers/xai.ts
       - run: bun run build
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
